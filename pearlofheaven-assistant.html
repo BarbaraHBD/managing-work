@@ -1,0 +1,338 @@
+<!-- Paste this complete snippet into a GoDaddy Websites + Marketing HTML section. -->
+<div id="poh-assistant"></div>
+<style>
+  #poh-assistant {
+    --poh-ink: #242424;
+    --poh-muted: #666;
+    --poh-paper: #fff;
+    --poh-soft: #f4f2ef;
+    --poh-accent: #80664f;
+    font-family: Arial, sans-serif;
+    color: var(--poh-ink);
+  }
+
+  #poh-assistant *,
+  #poh-assistant *::before,
+  #poh-assistant *::after {
+    box-sizing: border-box;
+  }
+
+  #poh-assistant .poh-launcher {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 99999;
+    min-height: 50px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--poh-accent);
+    color: #fff;
+    box-shadow: 0 4px 18px #0003;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+  }
+
+  #poh-assistant .poh-launcher:hover,
+  #poh-assistant .poh-send:hover {
+    filter: brightness(.92);
+  }
+
+  #poh-assistant .poh-panel {
+    position: fixed;
+    right: 20px;
+    bottom: 82px;
+    z-index: 99999;
+    display: flex;
+    width: min(370px, calc(100vw - 32px));
+    height: min(540px, calc(100vh - 120px));
+    min-height: 360px;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #0002;
+    border-radius: 16px;
+    background: var(--poh-paper);
+    box-shadow: 0 8px 32px #0003;
+  }
+
+  #poh-assistant [hidden] {
+    display: none !important;
+  }
+
+  #poh-assistant .poh-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px;
+    background: var(--poh-soft);
+  }
+
+  #poh-assistant .poh-heading {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  #poh-assistant .poh-caption {
+    margin: 4px 0 0;
+    color: var(--poh-muted);
+    font-size: 12px;
+  }
+
+  #poh-assistant .poh-close {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--poh-ink);
+    cursor: pointer;
+    font-size: 24px;
+  }
+
+  #poh-assistant .poh-messages {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  #poh-assistant .poh-message {
+    max-width: 88%;
+    padding: 11px 13px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
+  #poh-assistant .poh-bot {
+    align-self: flex-start;
+    background: var(--poh-soft);
+  }
+
+  #poh-assistant .poh-user {
+    align-self: flex-end;
+    background: var(--poh-accent);
+    color: #fff;
+  }
+
+  #poh-assistant .poh-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  #poh-assistant .poh-links a,
+  #poh-assistant .poh-suggestions button {
+    display: inline-block;
+    padding: 8px 11px;
+    border: 1px solid var(--poh-accent);
+    border-radius: 999px;
+    background: var(--poh-paper);
+    color: var(--poh-accent);
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    text-decoration: none;
+  }
+
+  #poh-assistant .poh-links a:hover,
+  #poh-assistant .poh-suggestions button:hover {
+    background: var(--poh-soft);
+  }
+
+  #poh-assistant .poh-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 16px 12px;
+  }
+
+  #poh-assistant .poh-form {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid #0001;
+  }
+
+  #poh-assistant .poh-input {
+    min-width: 0;
+    flex: 1;
+    padding: 11px 12px;
+    border: 1px solid #aaa;
+    border-radius: 10px;
+    background: #fff;
+    color: var(--poh-ink);
+    font: inherit;
+    font-size: 14px;
+  }
+
+  #poh-assistant .poh-send {
+    padding: 0 14px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--poh-accent);
+    color: #fff;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+  }
+
+  #poh-assistant .poh-note {
+    margin: 0;
+    padding: 0 14px 10px;
+    color: var(--poh-muted);
+    font-size: 11px;
+  }
+
+  @media (max-width: 480px) {
+    #poh-assistant .poh-launcher {
+      right: 12px;
+      bottom: 12px;
+    }
+
+    #poh-assistant .poh-panel {
+      right: 8px;
+      bottom: 72px;
+      width: calc(100vw - 16px);
+      height: min(560px, calc(100vh - 92px));
+    }
+  }
+</style>
+<script>
+  (function () {
+    "use strict";
+
+    var root = document.getElementById("poh-assistant");
+    if (!root || root.dataset.ready === "true") return;
+    root.dataset.ready = "true";
+
+    var site = "https://pearlofheaven.net";
+    var pages = {
+      home: { label: "Visit home page", href: site + "/" },
+      shop: { label: "Browse the shop", href: site + "/shop" },
+      orders: { label: "View orders", href: site + "/m/orders" },
+      account: { label: "Open my account", href: site + "/m/account" },
+      terms: { label: "Terms and conditions", href: site + "/terms-and-conditions" }
+    };
+
+    root.innerHTML =
+      '<button class="poh-launcher" type="button" aria-expanded="false" aria-controls="poh-panel">Ask Pearl</button>' +
+      '<section class="poh-panel" id="poh-panel" role="dialog" aria-label="PearlofHeaven assistant" hidden>' +
+        '<header class="poh-header"><div><h2 class="poh-heading">PearlofHeaven Assistant</h2>' +
+        '<p class="poh-caption">A quick guide to the shop and website</p></div>' +
+        '<button class="poh-close" type="button" aria-label="Close assistant">&times;</button></header>' +
+        '<div class="poh-messages" role="log" aria-live="polite" aria-relevant="additions"></div>' +
+        '<div class="poh-suggestions" aria-label="Suggested questions">' +
+          '<button type="button" data-question="Show me the shop">Shop</button>' +
+          '<button type="button" data-question="Where are my orders?">Orders</button>' +
+          '<button type="button" data-question="Open my account">My account</button>' +
+          '<button type="button" data-question="How can I contact the shop?">Help</button>' +
+        '</div>' +
+        '<form class="poh-form"><label for="poh-question" hidden>Ask a question</label>' +
+          '<input class="poh-input" id="poh-question" type="text" maxlength="500" autocomplete="off" placeholder="Ask about the shop..." required>' +
+          '<button class="poh-send" type="submit">Send</button></form>' +
+        '<p class="poh-note">I can guide you around the site. For order or product details, please check the shop or your account.</p>' +
+      '</section>';
+
+    var launcher = root.querySelector(".poh-launcher");
+    var panel = root.querySelector(".poh-panel");
+    var closeButton = root.querySelector(".poh-close");
+    var messages = root.querySelector(".poh-messages");
+    var form = root.querySelector(".poh-form");
+    var input = root.querySelector(".poh-input");
+
+    function addLinks(message, linkKeys) {
+      var bubble = document.createElement("div");
+      bubble.className = "poh-message poh-bot";
+      bubble.appendChild(document.createTextNode(message));
+
+      if (linkKeys.length) {
+        var links = document.createElement("div");
+        links.className = "poh-links";
+        linkKeys.forEach(function (key) {
+          var page = pages[key];
+          var link = document.createElement("a");
+          link.href = page.href;
+          link.textContent = page.label;
+          links.appendChild(link);
+        });
+        bubble.appendChild(links);
+      }
+
+      messages.appendChild(bubble);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function addUserMessage(message) {
+      var bubble = document.createElement("div");
+      bubble.className = "poh-message poh-user";
+      bubble.textContent = message;
+      messages.appendChild(bubble);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function answer(question) {
+      var text = question.toLowerCase();
+
+      if (/\b(order|orders|tracking|track|shipment|shipping status)\b/.test(text)) {
+        addLinks("You can check orders from the site's Orders page. Sign in if the site asks you to.", ["orders"]);
+      } else if (/\b(account|sign in|signin|login|log in|password)\b/.test(text)) {
+        addLinks("Use the account page to sign in or manage your account.", ["account"]);
+      } else if (/\b(shop|product|products|gift|gifts|buy|purchase|checkout|cart)\b/.test(text)) {
+        addLinks("Browse the current products and continue to checkout in the shop. I can't confirm item availability or prices here.", ["shop"]);
+      } else if (/\b(home|homepage|start|navigate|website)\b/.test(text)) {
+        addLinks("You can return to the home page or browse the shop.", ["home", "shop"]);
+      } else if (/\b(terms|policy|policies|conditions|return|refund|exchange)\b/.test(text)) {
+        addLinks("Please review the site's Terms and Conditions for the published policies.", ["terms"]);
+      } else if (/\b(contact|help|support|email|phone|human|person|question)\b/.test(text)) {
+        addLinks("I couldn't find a published contact channel in the shop page. You can browse the shop or check your account and orders here.", ["shop", "account", "orders"]);
+      } else {
+        addLinks("I can help you find the shop, account, orders, or site information. I don't have verified product, delivery, or return details, so please check the shop or Terms and Conditions.", ["shop", "account", "orders", "terms"]);
+      }
+    }
+
+    function submitQuestion(question) {
+      var trimmed = question.trim();
+      if (!trimmed) return;
+      addUserMessage(trimmed);
+      answer(trimmed);
+    }
+
+    launcher.addEventListener("click", function () {
+      var willOpen = panel.hidden;
+      panel.hidden = !willOpen;
+      launcher.setAttribute("aria-expanded", String(willOpen));
+      if (willOpen) {
+        if (!messages.childElementCount) {
+          addLinks("Welcome to PearlofHeaven. I can help you find the shop, your account, and your orders. What would you like to do?", ["shop", "account", "orders"]);
+        }
+        input.focus();
+      }
+    });
+
+    closeButton.addEventListener("click", function () {
+      panel.hidden = true;
+      launcher.setAttribute("aria-expanded", "false");
+      launcher.focus();
+    });
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      submitQuestion(input.value);
+      input.value = "";
+      input.focus();
+    });
+
+    root.querySelector(".poh-suggestions").addEventListener("click", function (event) {
+      var button = event.target.closest("button[data-question]");
+      if (button) submitQuestion(button.dataset.question);
+    });
+  }());
+</script>
